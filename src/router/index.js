@@ -1,25 +1,43 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import { projectAuth } from "@/firebase/config";
+import { createRouter, createWebHistory } from "vue-router";
 
+// redirect to login screen if not logged in
+const requireAuthGuard = (to, from, next) => {
+  let user = projectAuth.currentUser;
+  if (!user) {
+    next({ name: "Welcome" });
+  } else {
+    next();
+  }
+};
+
+// redirect to home screen if logged in
+const redirectToChatrooomGuard = (to, from, next) => {
+  let user = projectAuth.currentUser;
+  if (user) {
+    next({ name: 'Chatroom' })
+  } else {
+    next();
+  }
+}
 const routes = [
   {
-    path: '/',
-    name: 'home',
-    component: HomeView
+    path: "/",
+    name: "Welcome",
+    component: () => import("../views/Welcome.vue"),
+    beforeEnter: redirectToChatrooomGuard,
   },
   {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
-  }
-]
+    path: "/chatroom",
+    name: "Chatroom",
+    component: () => import("../views/Chatroom.vue"),
+    beforeEnter: requireAuthGuard,
+  },
+];
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
-  routes
-})
+  routes,
+});
 
-export default router
+export default router;
