@@ -2,7 +2,7 @@
     <div class="welcome container">
         <p>Welcome</p>
         <div v-if="showLogin">
-            <h2>Login</h2>
+            <h2>Login to Chatroom</h2>
             <LoginForm @loginEmit="enterChatroom" />
             <p @click="showLogin = false">No account yet? <span>Sign up</span> instead</p>
         </div>
